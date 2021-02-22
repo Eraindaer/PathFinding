@@ -43,7 +43,6 @@ int height;
 DWORD time;//temps de calcul
 
 // la structure pour une case
-//Sera sûrement utile pour caculer la distance heuristique
 struct cases
 {
 	int x;
@@ -218,9 +217,7 @@ void DrawDir(int x,int y,int direc)// on dessine les directions dans les cases (
 		glVertex2i(x*TX+(TX*3)/4-3,y*TY+TY/4);
 	}	
 	glEnd();
-}
-		
-		
+}		
 		
 void astar (void)// L'algorithme A*...
 {
@@ -232,8 +229,81 @@ void astar (void)// L'algorithme A*...
 	cases courant=depart;
 	bool arrtrouv=false;
 	int a,am,f;
-	
 
+	while (!arrtrouv && !nochemin) {
+		int g = courant.G;
+		AddO(courant.x - 1, courant.y, 1, g + 11);
+		AddO(courant.x, courant.y - 1, 2, g + 11);
+		AddO(courant.x + 1, courant.y, 3, g + 11);
+		AddO(courant.x, courant.y + 1, 4, g + 11);
+		AddO(courant.x - 1, courant.y - 1, 5, g + 20);
+		AddO(courant.x + 1, courant.y - 1, 6, g + 20);
+		AddO(courant.x - 1, courant.y + 1, 7, g + 20);
+		AddO(courant.x + 1, courant.y + 1, 8, g + 20);
+
+		cases min = ouvert[0];
+
+		for (int i = 1; i < nbouvert; i++) {
+			if (ouvert[i].F <= min.F)
+				min = ouvert[i];
+		}
+		courant = min;
+		AddF(courant);
+		SupO(courant);
+
+		if (courant.x == arrivee.x && courant.y == arrivee.y) {
+			arrtrouv = true;
+		}
+		if (nbouvert == 0) {
+			nochemin = true;
+		}
+	}
+
+	if (arrtrouv) {
+		cases temp = arrivee;
+		while (temp.x != depart.x || temp.y != depart.y) {
+			switch (dir[temp.x][temp.y]) {
+			case 1:
+				temp.x++;
+				break;
+			case 2:
+				temp.y++;
+				break;
+			case 3:
+				temp.x--;
+				break;
+			case 4:
+				temp.y--;
+				break;
+			case 5:
+				temp.x++;
+				temp.y++;
+				break;
+			case 6:
+				temp.x--;
+				temp.y++;
+				break;
+			case 7:
+				temp.x++;
+				temp.y--;
+				break;
+			case 8:
+				temp.x--;
+				temp.y--;
+				break;
+			default:
+				break;
+			}
+			for (int i = 0; i < nbferme; i++) {
+				if (temp.x == ferme[i].x && temp.y == ferme[i].y) {
+					chemin[nbchemin] = ferme[i];
+					nbchemin++; 
+					break;
+				}
+			}
+		}
+	}
+	int test;
 }
 	
 	
@@ -324,6 +394,19 @@ void display (void)
 	glColor3f (.4f,.4f,.4f); 
 	for (int a=0;a<nbnonfranchissable;a++)
 		FullRectangle(nonfranchissable[a].x*TX,nonfranchissable[a].y*TY,TX,TY);
+	
+	//glColor3f(0.0f, 1.0f, 0.0f);
+	////Visualisation cases ouvertes (en vert)
+	//for (int a = 0; a < nbouvert; a++) {
+	//	FullRectangle(ouvert[a].x * TX, ouvert[a].y * TY, TX, TY);
+	//}
+	//
+	//glColor3f(1.0f, 0.0f, 0.0f);
+	////Visualisation cases fermées (en rouge)
+	//for (int a = 0; a < nbferme; a++) {
+	//	FullRectangle(ferme[a].x * TX, ferme[a].y * TY, TX, TY);
+	//}
+
 
     // le chemin en bleu avec les directions en cyan
 	for (int a=0;a<nbchemin;a++)
@@ -333,7 +416,7 @@ void display (void)
 		glColor3f(0,1,1);
 		DrawDir (chemin[a].x,chemin[a].y,dir[chemin[a].x][chemin[a].y]);
 	}
- 	
+
 	// le départ en vert
 	glColor3f (0,1,0);
 	FullRectangle(depart.x*TX,depart.y*TY,TX,TY);
@@ -414,7 +497,6 @@ void reshape (int w,int h)
 	width=w;
 	height=h;
 }
-
 
 void keyboard(unsigned char key, int x,int y)
 {
