@@ -38,14 +38,14 @@ void GridManager::AStar()
 	//Etablissement des chemins possibles
 	while (!finished && !nopath) {
 		int g = current.G;
-		AddO(current.x - 1, current.y, 1, g + 11);
-		AddO(current.x, current.y - 1, 2, g + 11);
-		AddO(current.x + 1, current.y, 3, g + 11);
-		AddO(current.x, current.y + 1, 4, g + 11);
-		AddO(current.x - 1, current.y - 1, 5, g + 20);
-		AddO(current.x + 1, current.y - 1, 6, g + 20);
-		AddO(current.x - 1, current.y + 1, 7, g + 20);
-		AddO(current.x + 1, current.y + 1, 8, g + 20);
+		AddO(current.x - 1, current.y, LEFT, g + 11);
+		AddO(current.x, current.y - 1, UP, g + 11);
+		AddO(current.x + 1, current.y, RIGHT, g + 11);
+		AddO(current.x, current.y + 1, DOWN, g + 11);
+		AddO(current.x - 1, current.y - 1, UPLEFT, g + 20);
+		AddO(current.x + 1, current.y - 1, UPRIGHT, g + 20);
+		AddO(current.x - 1, current.y + 1, DOWNLEFT, g + 20);
+		AddO(current.x + 1, current.y + 1, DOWNRIGHT, g + 20);
 
 		current = opened[0];
 
@@ -198,7 +198,6 @@ void GridManager::Draw(const GraphicsManager& gfx, GLuint base) const
 	glVertex2i(p.x + 10, p.y + 13);
 
 	glEnd();
-
 	glFlush();
 }
 

@@ -1,7 +1,6 @@
 #pragma once
 #include "GraphicsManager.h"
 #include "GridManager.h"
-#include <memory>
 
 class WinManager
 {
@@ -22,10 +21,10 @@ private:
 	int&					    height;
 	GridManager&				grid;
 	HWND&						hWnd;
+
 	GraphicsManager				gfx;
 	WNDCLASS					wc;
 	GLuint						base;
 	HGLRC						hRC;
 	HDC							hDC;
 };
-

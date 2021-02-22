@@ -2,14 +2,14 @@
 #include "GraphicsManager.h"
 #include <memory>
 
-#define GAUCHE	1
-#define HAUT	2
-#define DROITE	3
-#define BAS		4
-#define GAUCHEHAUT	5
-#define DROITEHAUT	6
-#define GAUCHEBAS	7
-#define DROITEBAS	8
+#define LEFT		1
+#define UP  		2
+#define RIGHT		3
+#define DOWN		4
+#define UPLEFT  	5
+#define UPRIGHT 	6
+#define DOWNLEFT	7
+#define DOWNRIGHT	8
 
 #define ABS(x)	((x)<0?(-(x)):(x))	
 

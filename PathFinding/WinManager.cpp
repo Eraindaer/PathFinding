@@ -29,7 +29,6 @@ WinManager::~WinManager()
     DestroyWindow(hWnd);
 }
 
-
 void WinManager::Display()
 {
     grid.Draw(gfx, base);

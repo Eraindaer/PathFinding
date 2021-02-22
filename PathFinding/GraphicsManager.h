@@ -25,4 +25,3 @@ public:
 	void   DrawDir(int x, int y, int direc) const;
 	GLvoid glPrint(const char* fmt, GLuint base, ...) const;
 };
-
