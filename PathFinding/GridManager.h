@@ -16,7 +16,7 @@
 class GridManager
 {
 private:
-	struct Cases {
+	struct Tiles {
 		int x;
 		int y;
 		int F, G, H;
@@ -35,28 +35,28 @@ public:
 	void Keyboard(unsigned char key, int x, int y);
 
 private:
-	void Vide();
-	void AddF(Cases c);
+	void Clear();
+	void AddF(Tiles c);
 	void AddO(int x, int y, char direc, int g);
-	void SupO(Cases c);
+	void DelO(Tiles c);
 	void PopNF(int a);
 
 private:
 	HWND&  hWnd;
 	DWORD  time;
-	int&    width;
-	int&    height;
-	Cases  nonfranchissable[BX * BY] = {};
-	int	   nbnonfranchissable = 0;
-	Cases  ouvert[BX * BY] = {};
-	int	   nbouvert = 0;
-	Cases  ferme[BX * BY] = {};
-	int    nbferme = 0;
-	Cases  chemin[BX * BY] = {};
-	int    nbchemin;
-	Cases  depart = { 0,0 };
-	Cases  arrivee = { BX - 1,BY - 1 };
+	int&   width;
+	int&   height;
+	Tiles  obstacle[BX * BY] = {};
+	int	   nObstacle = 0;
+	Tiles  opened[BX * BY] = {};
+	int	   nOpened = 0;
+	Tiles  closed[BX * BY] = {};
+	int    nClosed = 0;
+	Tiles  path[BX * BY] = {};
+	int    nPath;
+	Tiles  start = { 0,0 };
+	Tiles  end = { BX - 1,BY - 1 };
 	char   dir[BX][BY];
-	bool   nochemin = false;// pour savoir si il y a un chemin
+	bool   nopath = false;// pour savoir si il y a un chemin
 	bool   viewhelp = false;// pour afficher l'aide (H)
 };

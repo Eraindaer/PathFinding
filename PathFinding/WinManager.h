@@ -17,9 +17,9 @@ private:
 	void DisableOpenGL();
 
 private:
-	int&			    width;
-	int&			    height;
-	GridManager&					grid;
+	int&						width;
+	int&					    height;
+	GridManager&				grid;
 	HWND&						hWnd;
 	GraphicsManager				gfx;
 	WNDCLASS					wc;

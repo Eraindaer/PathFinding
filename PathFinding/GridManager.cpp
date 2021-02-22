@@ -10,7 +10,7 @@ GridManager::GridManager(HWND& hWnd, int& width_in, int& height_in)
 
 GridManager::~GridManager()
 {
-	Vide();
+	Clear();
 }
 
 GridManager::GridManager(GridManager& copy)
@@ -29,43 +29,43 @@ GridManager& GridManager::operator=(const GridManager& gridMan)
 
 void GridManager::AStar()
 {
-	nochemin = false;
+	nopath = false;
 	time = GetTickCount();
-	Vide();
-	Cases courant = depart;
-	bool arrtrouv = false;
+	Clear();
+	Tiles current = start;
+	bool finished = false;
 
 	//Etablissement des chemins possibles
-	while (!arrtrouv && !nochemin) {
-		int g = courant.G;
-		AddO(courant.x - 1, courant.y, 1, g + 11);
-		AddO(courant.x, courant.y - 1, 2, g + 11);
-		AddO(courant.x + 1, courant.y, 3, g + 11);
-		AddO(courant.x, courant.y + 1, 4, g + 11);
-		AddO(courant.x - 1, courant.y - 1, 5, g + 20);
-		AddO(courant.x + 1, courant.y - 1, 6, g + 20);
-		AddO(courant.x - 1, courant.y + 1, 7, g + 20);
-		AddO(courant.x + 1, courant.y + 1, 8, g + 20);
+	while (!finished && !nopath) {
+		int g = current.G;
+		AddO(current.x - 1, current.y, 1, g + 11);
+		AddO(current.x, current.y - 1, 2, g + 11);
+		AddO(current.x + 1, current.y, 3, g + 11);
+		AddO(current.x, current.y + 1, 4, g + 11);
+		AddO(current.x - 1, current.y - 1, 5, g + 20);
+		AddO(current.x + 1, current.y - 1, 6, g + 20);
+		AddO(current.x - 1, current.y + 1, 7, g + 20);
+		AddO(current.x + 1, current.y + 1, 8, g + 20);
 
-		courant = ouvert[0];
+		current = opened[0];
 
-		for (int i = 1; i < nbouvert; i++) {
-			if (ouvert[i].F <= courant.F)
-				courant = ouvert[i];
+		for (int i = 1; i < nOpened; i++) {
+			if (opened[i].F <= current.F)
+				current = opened[i];
 		}
-		AddF(courant);
-		SupO(courant);
-		if (courant.x == arrivee.x && courant.y == arrivee.y) {
-			arrtrouv = true;
+		AddF(current);
+		DelO(current);
+		if (current.x == end.x && current.y == end.y) {
+			finished = true;
 		}
-		if (nbouvert == 0) {
-			nochemin = true;
+		if (nOpened == 0) {
+			nopath = true;
 		}
 	}
 	//Tracer du chemin en partant de l'arrivée
-	if (arrtrouv) {
-		Cases temp = arrivee;
-		while (temp.x != depart.x || temp.y != depart.y) {
+	if (finished) {
+		Tiles temp = end;
+		while (temp.x != start.x || temp.y != start.y) {
 			switch (dir[temp.x][temp.y]) {
 			case 1:
 				temp.x++;
@@ -98,10 +98,10 @@ void GridManager::AStar()
 			default:
 				break;
 			}
-			for (int i = 0; i < nbferme; i++) {
-				if (temp.x == ferme[i].x && temp.y == ferme[i].y) {
-					chemin[nbchemin] = ferme[i];
-					nbchemin++;
+			for (int i = 0; i < nClosed; i++) {
+				if (temp.x == closed[i].x && temp.y == closed[i].y) {
+					path[nPath] = closed[i];
+					nPath++;
 					break;
 				}
 			}
@@ -121,30 +121,30 @@ void GridManager::Draw(GraphicsManager& gfx, GLuint base)
 
 				// les murs en gris
 	glColor3f(.4f, .4f, .4f);
-	for (int a = 0; a < nbnonfranchissable; a++)
-		gfx.DrawRect(nonfranchissable[a].x * TX, nonfranchissable[a].y * TY, TX, TY);
+	for (int a = 0; a < nObstacle; a++)
+		gfx.DrawRect(obstacle[a].x * TX, obstacle[a].y * TY, TX, TY);
 
 	// le chemin en bleu avec les directions en cyan
-	for (int a = 0; a < nbchemin; a++)
+	for (int a = 0; a < nPath; a++)
 	{
 		glColor3f(0, 0, 1);
-		gfx.DrawRect(chemin[a].x * TX, chemin[a].y * TY, TX, TY);
+		gfx.DrawRect(path[a].x * TX, path[a].y * TY, TX, TY);
 		glColor3f(0, 1, 1);
-		gfx.DrawDir(chemin[a].x, chemin[a].y, dir[chemin[a].x][chemin[a].y]);
+		gfx.DrawDir(path[a].x, path[a].y, dir[path[a].x][path[a].y]);
 	}
 
 	// le départ en vert
 	glColor3f(0, 1, 0);
-	gfx.DrawRect(depart.x * TX, depart.y * TY, TX, TY);
+	gfx.DrawRect(start.x * TX, start.y * TY, TX, TY);
 	// l'arrivée en rouge
 	glColor3f(1, 0, 0);
-	gfx.DrawRect(arrivee.x * TX, arrivee.y * TY, TX, TY);
+	gfx.DrawRect(end.x * TX, end.y * TY, TX, TY);
 
 	// le texte
 	glColor3f(1, 1, 1);
 	glRasterPos2i(0, 10);
 	gfx.glPrint("(<h> pour aide)  © 2004 Cadé David", base);
-	if (nochemin)
+	if (nopath)
 	{
 		glRasterPos2i(0, 20);
 		gfx.glPrint("Pas de chemin", base);
@@ -172,8 +172,8 @@ void GridManager::Draw(GraphicsManager& gfx, GLuint base)
 	POINT p;
 	GetCursorPos(&p);
 	ScreenToClient(hWnd, &p);
-	p.x = (int)((float)p.x / (float)width * 640.);
-	p.y = (int)((float)p.y / (float)height * 480.);
+	p.x = (int)((float)p.x / (float)width * 640.0f);
+	p.y = (int)((float)p.y / (float)height * 480.0f);
 
 	glColor4f(.5f, 1.0f, .5f, .4f);
 	gfx.DrawRect(p.x / TX * TX + 2, p.y / TY * TY + 2, TX - 4, TY - 4);
@@ -205,42 +205,42 @@ void GridManager::Draw(GraphicsManager& gfx, GLuint base)
 void GridManager::MouseClick(int x, int y)
 {
 	int a;
-	x = (int)((float)x / (float)width * 640.);
-	y = (int)((float)y / (float)height * 480.);
+	x = (int)((float)x / (float)width * 640.0f);
+	y = (int)((float)y / (float)height * 480.0f);
 
 	x /= TX; y /= TY;
-	if (nbchemin > 0) Vide();
+	if (nPath > 0) Clear();
 
-	for (a = 0; a < nbnonfranchissable; a++)
-		if (nonfranchissable[a].x == x && nonfranchissable[a].y == y)
+	for (a = 0; a < nObstacle; a++)
+		if (obstacle[a].x == x && obstacle[a].y == y)
 		{
 			PopNF(a);
 			AStar();
 			return;
 		}
-	nonfranchissable[nbnonfranchissable].x = x;
-	nonfranchissable[nbnonfranchissable].y = y;
-	nbnonfranchissable++;
+	obstacle[nObstacle].x = x;
+	obstacle[nObstacle].y = y;
+	nObstacle++;
 	AStar();
 }
 
 void GridManager::Keyboard(unsigned char key, int x, int y)
 {
-	x = (int)((float)x / (float)width * 640.);
-	y = (int)((float)y / (float)height * 480.);
+	x = (int)((float)x / (float)width * 640.0f);
+	y = (int)((float)y / (float)height * 480.0f);
 
 	switch (key)
 	{
 	case 'D':
 	case 'd':
-		depart.x = x / TX;
-		depart.y = y / TY;
+		start.x = x / TX;
+		start.y = y / TY;
 		AStar();
 		break;
 	case 'A':
 	case 'a':
-		arrivee.x = x / TX;
-		arrivee.y = y / TY;
+		end.x = x / TX;
+		end.y = y / TY;
 		AStar();
 		break;
 	case 'H':
@@ -256,17 +256,17 @@ void GridManager::Keyboard(unsigned char key, int x, int y)
 	}
 }
 
-void GridManager::Vide()
+void GridManager::Clear()
 {
-	nbouvert = 0;
-	nbferme = 0;
-	nbchemin = 0;
+	nOpened = 0;
+	nClosed = 0;
+	nPath = 0;
 }
 
-void GridManager::AddF(Cases c)
+void GridManager::AddF(Tiles c)
 {
-	ferme[nbferme] = c;
-	nbferme++;
+	closed[nClosed] = c;
+	nClosed++;
 }
 
 void GridManager::AddO(int x, int y, char direc, int g)
@@ -274,52 +274,52 @@ void GridManager::AddO(int x, int y, char direc, int g)
 	int a;
 	if (!(x < 0 || x >= BX || y < 0 || y >= BY))//bornes
 	{
-		for (a = 0; a < nbferme; a++)//case fermée?
-			if (ferme[a].x == x && ferme[a].y == y)
+		for (a = 0; a < nClosed; a++)//case fermée?
+			if (closed[a].x == x && closed[a].y == y)
 				return;
 
-		for (a = 0; a < nbnonfranchissable; a++)//case franchissable?
-			if (nonfranchissable[a].x == x && nonfranchissable[a].y == y)
+		for (a = 0; a < nObstacle; a++)//case franchissable?
+			if (obstacle[a].x == x && obstacle[a].y == y)
 				return;
 
-		for (a = 0; a < nbouvert; a++)//case ouverte?
-			if (ouvert[a].x == x && ouvert[a].y == y)
+		for (a = 0; a < nOpened; a++)//case ouverte?
+			if (opened[a].x == x && opened[a].y == y)
 			{
-				if (ouvert[a].G > g)// on change la direction dans la case
+				if (opened[a].G > g)// on change la direction dans la case
 				{
-					ouvert[a].G = g;
-					ouvert[a].F = g + ouvert[a].H;
+					opened[a].G = g;
+					opened[a].F = g + opened[a].H;
 					dir[x][y] = direc;
 				}
 				return;
 			}
 		// on rajoute la case
-		ouvert[nbouvert].x = x;
-		ouvert[nbouvert].y = y;
-		ouvert[nbouvert].G = g;
-		ouvert[nbouvert].H = 10 * (ABS(arrivee.x - x) + ABS(arrivee.y - y));
-		ouvert[nbouvert].F = g + ouvert[nbouvert].H;
+		opened[nOpened].x = x;
+		opened[nOpened].y = y;
+		opened[nOpened].G = g;
+		opened[nOpened].H = 10 * (ABS(end.x - x) + ABS(end.y - y));
+		opened[nOpened].F = g + opened[nOpened].H;
 		dir[x][y] = direc;
 
-		nbouvert++;
+		nOpened++;
 	}
 }
 
-void GridManager::SupO(Cases c)
+void GridManager::DelO(Tiles c)
 {
-	for (int a = 0; a < nbouvert; a++)
+	for (int a = 0; a < nOpened; a++)
 
-		if (c.x == ouvert[a].x && c.y == ouvert[a].y)
+		if (c.x == opened[a].x && c.y == opened[a].y)
 		{
-			for (int i = a + 1; i < nbouvert; i++)
-				ouvert[i - 1] = ouvert[i];
-			nbouvert--;
+			for (int i = a + 1; i < nOpened; i++)
+				opened[i - 1] = opened[i];
+			nOpened--;
 		}
 }
 
 void GridManager::PopNF(int a)
 {
-	for (int i = a + 1; i < nbnonfranchissable; i++)
-		nonfranchissable[i - 1] = nonfranchissable[i];
-	nbnonfranchissable--;
+	for (int i = a + 1; i < nObstacle; i++)
+		obstacle[i - 1] = obstacle[i];
+	nObstacle--;
 }

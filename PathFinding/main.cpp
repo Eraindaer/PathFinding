@@ -50,6 +50,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_SIZE:
         glViewport(0, 0, (GLsizei)LOWORD(lParam), (GLsizei)HIWORD(lParam));
+        width = LOWORD(lParam);
+        height = HIWORD(lParam);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho(0, 640, 480, 0, -1, 1);  //projection 640*480 (comme d'hab'...)
