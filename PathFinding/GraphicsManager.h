@@ -20,9 +20,9 @@ public:
 	GraphicsManager() = default;
 	~GraphicsManager() = default;
 
-	void   DrawRect(int x, int y, int w, int h);
-	void   DrawRectBorder(int x, int y, int w, int h);
-	void   DrawDir(int x, int y, int direc);
-	GLvoid glPrint(const char* fmt, GLuint base, ...);
+	void   DrawRect(int x, int y, int w, int h) const;
+	void   DrawRectBorder(int x, int y, int w, int h) const;
+	void   DrawDir(int x, int y, int direc) const;
+	GLvoid glPrint(const char* fmt, GLuint base, ...) const;
 };
 

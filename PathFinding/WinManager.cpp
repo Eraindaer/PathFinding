@@ -62,7 +62,7 @@ void WinManager::EnableOpenGL()
     wglMakeCurrent(hDC, hRC);
 }
 
-void WinManager::DisableOpenGL()
+void WinManager::DisableOpenGL() const
 {
     wglMakeCurrent(NULL, NULL);
     wglDeleteContext(hRC);

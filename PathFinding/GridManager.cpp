@@ -109,7 +109,7 @@ void GridManager::AStar()
 	}
 }
 
-void GridManager::Draw(GraphicsManager& gfx, GLuint base)
+void GridManager::Draw(const GraphicsManager& gfx, GLuint base) const
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 

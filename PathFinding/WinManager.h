@@ -1,6 +1,7 @@
 #pragma once
 #include "GraphicsManager.h"
 #include "GridManager.h"
+#include <memory>
 
 class WinManager
 {
@@ -14,7 +15,7 @@ public:
 private:
 	void Init();
 	void EnableOpenGL();
-	void DisableOpenGL();
+	void DisableOpenGL() const;
 
 private:
 	int&						width;

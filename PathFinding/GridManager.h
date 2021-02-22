@@ -30,7 +30,7 @@ public:
 	GridManager& operator= (const GridManager&);
 
 	void AStar();
-	void Draw(GraphicsManager& gfx, GLuint base);
+	void Draw(const GraphicsManager& gfx, GLuint base) const;
 	void MouseClick(int x, int y);
 	void Keyboard(unsigned char key, int x, int y);
 

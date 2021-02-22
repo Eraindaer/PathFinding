@@ -1,6 +1,6 @@
 #include "GraphicsManager.h"
 
-void GraphicsManager::DrawRect(int x, int y, int w, int h)
+void GraphicsManager::DrawRect(int x, int y, int w, int h) const
 {
 	glBegin(GL_QUADS);
 	glVertex2i(x, y);
@@ -10,7 +10,7 @@ void GraphicsManager::DrawRect(int x, int y, int w, int h)
 	glEnd();
 }
 
-void GraphicsManager::DrawRectBorder(int x, int y, int w, int h)
+void GraphicsManager::DrawRectBorder(int x, int y, int w, int h) const
 {
 	glBegin(GL_LINE_LOOP);
 	glVertex2i(x, y);
@@ -20,7 +20,7 @@ void GraphicsManager::DrawRectBorder(int x, int y, int w, int h)
 	glEnd();
 }
 
-void GraphicsManager::DrawDir(int x, int y, int direc)
+void GraphicsManager::DrawDir(int x, int y, int direc) const
 {
 	glBegin(GL_LINES);
 	switch (direc) {
@@ -94,7 +94,7 @@ void GraphicsManager::DrawDir(int x, int y, int direc)
 	glEnd();
 }
 
-GLvoid GraphicsManager::glPrint(const char* fmt, GLuint base, ...)
+GLvoid GraphicsManager::glPrint(const char* fmt, GLuint base, ...) const
 {
 	char		text[256];				// Holds Our String
 	va_list		ap;					// Pointer To List Of Arguments
