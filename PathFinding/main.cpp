@@ -224,12 +224,10 @@ void astar (void)// L'algorithme A*...
 	nochemin=false;
 	time=GetTickCount();
 	vide();
-/*	char buffer[200];  
-	char buf[2000];*/
 	cases courant=depart;
 	bool arrtrouv=false;
-	int a,am,f;
 
+	//Etablissement des chemins possibles
 	while (!arrtrouv && !nochemin) {
 		int g = courant.G;
 		AddO(courant.x - 1, courant.y, 1, g + 11);
@@ -241,16 +239,14 @@ void astar (void)// L'algorithme A*...
 		AddO(courant.x - 1, courant.y + 1, 7, g + 20);
 		AddO(courant.x + 1, courant.y + 1, 8, g + 20);
 
-		cases min = ouvert[0];
+		courant = ouvert[0];
 
 		for (int i = 1; i < nbouvert; i++) {
-			if (ouvert[i].F <= min.F)
-				min = ouvert[i];
+			if (ouvert[i].F <= courant.F)
+				courant = ouvert[i];
 		}
-		courant = min;
 		AddF(courant);
 		SupO(courant);
-
 		if (courant.x == arrivee.x && courant.y == arrivee.y) {
 			arrtrouv = true;
 		}
@@ -258,7 +254,7 @@ void astar (void)// L'algorithme A*...
 			nochemin = true;
 		}
 	}
-
+	//Tracer du chemin en partant de l'arrivée
 	if (arrtrouv) {
 		cases temp = arrivee;
 		while (temp.x != depart.x || temp.y != depart.y) {
@@ -303,7 +299,6 @@ void astar (void)// L'algorithme A*...
 			}
 		}
 	}
-	int test;
 }
 	
 	
