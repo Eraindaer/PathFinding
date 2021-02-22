@@ -50,8 +50,6 @@ struct cases
 	int F,G,H;
 };
 
-
-
 cases nonfranchissable[BX*BY]={};
 int nbnonfranchissable=0;
 
@@ -71,7 +69,6 @@ char dir[BX][BY];
 
 bool nochemin=false;// pour savoir si il y a un chemin
 bool viewhelp=false;// pour afficher l'aide (H)
-
 
 void display(void);//affichage
 void FullRectangle (int x,int y,int w,int h);//Dessine un rectangle plein
@@ -352,7 +349,6 @@ GLvoid glPrint(const char *fmt, ...)				// Custom GL "Print" Routine
 }
 //*************************************
 
-
 //dessine un rectangle plein
 void FullRectangle (int x,int y,int w,int h)
 {
@@ -389,19 +385,6 @@ void display (void)
 	glColor3f (.4f,.4f,.4f); 
 	for (int a=0;a<nbnonfranchissable;a++)
 		FullRectangle(nonfranchissable[a].x*TX,nonfranchissable[a].y*TY,TX,TY);
-	
-	//glColor3f(0.0f, 1.0f, 0.0f);
-	////Visualisation cases ouvertes (en vert)
-	//for (int a = 0; a < nbouvert; a++) {
-	//	FullRectangle(ouvert[a].x * TX, ouvert[a].y * TY, TX, TY);
-	//}
-	//
-	//glColor3f(1.0f, 0.0f, 0.0f);
-	////Visualisation cases fermées (en rouge)
-	//for (int a = 0; a < nbferme; a++) {
-	//	FullRectangle(ferme[a].x * TX, ferme[a].y * TY, TX, TY);
-	//}
-
 
     // le chemin en bleu avec les directions en cyan
 	for (int a=0;a<nbchemin;a++)
@@ -446,7 +429,7 @@ void display (void)
  		glPrint ("Le curseur est constitué d'un indicateur (plein) pour voir la case courante");
 	
  	}	
-	 		
+
 	// le curseur
 	POINT p;
 	GetCursorPos(&p);
@@ -552,7 +535,6 @@ void mouseClick(int x,int y)// en cas de click, on rajoute ou on enlève un mur
 	nonfranchissable[nbnonfranchissable].y=y;
 	nbnonfranchissable++;
 	astar();
-
 }
 
 // code OpenGL produit par Dev-C++
@@ -561,7 +543,6 @@ LRESULT CALLBACK WndProc (HWND hWnd, UINT message,
 WPARAM wParam, LPARAM lParam);
 void EnableOpenGL (HWND hWnd, HDC *hDC, HGLRC *hRC);
 void DisableOpenGL (HWND hWnd, HDC hDC, HGLRC hRC);
-
 
 /**************************
  * WinMain
@@ -627,8 +608,7 @@ WinMain (HINSTANCE hInstance,
         else
         {
             /* OpenGL animation code goes here */
-            
-            display ();
+            display();
              
             SwapBuffers (hDC);
         }
@@ -642,7 +622,6 @@ WinMain (HINSTANCE hInstance,
 
     return msg.wParam;
 }
-
 
 /********************
  * Window Procedure
@@ -702,15 +681,12 @@ WndProc (HWND hWnd, UINT message,
     }
 }
 
-
-
 /*******************
  * Enable OpenGL
  *
  *******************/
 
-void
-EnableOpenGL (HWND hWnd, HDC *hDC, HGLRC *hRC)
+void EnableOpenGL (HWND hWnd, HDC *hDC, HGLRC *hRC)
 {
     PIXELFORMATDESCRIPTOR pfd;
     int iFormat;
@@ -736,14 +712,12 @@ EnableOpenGL (HWND hWnd, HDC *hDC, HGLRC *hRC)
     wglMakeCurrent( *hDC, *hRC );
 }
 
-
 /******************
  * Disable OpenGL
  *
  ******************/
 
-void
-DisableOpenGL (HWND hWnd, HDC hDC, HGLRC hRC)
+void DisableOpenGL (HWND hWnd, HDC hDC, HGLRC hRC)
 {
     wglMakeCurrent (NULL, NULL);
     wglDeleteContext (hRC);
