@@ -35,6 +35,7 @@
 
 #define ABS(x)	((x)<0?(-(x)):(x))	
 
+//Variables globales :(
 HWND hWnd;
 HDC hDC;
 GLuint base;
@@ -133,7 +134,9 @@ void vide (void)// on vide tout
 	nbouvert=0;
  	nbferme=0;
   	nbchemin=0;
-}				
+}
+
+//Draw
 void DrawDir(int x,int y,int direc)// on dessine les directions dans les cases (le truc bleu clair)
 {
 	glBegin (GL_LINES);
@@ -216,6 +219,7 @@ void DrawDir(int x,int y,int direc)// on dessine les directions dans les cases (
 	glEnd();
 }		
 		
+//Algorithme de calcul
 void astar (void)// L'algorithme A*...
 {
 	nochemin=false;
@@ -299,6 +303,7 @@ void astar (void)// L'algorithme A*...
 }
 	
 	
+//Initialisation Scene
 void init (void)
 {
    // Piqué chez Nehe***************
@@ -350,6 +355,7 @@ GLvoid glPrint(const char *fmt, ...)				// Custom GL "Print" Routine
 //*************************************
 
 //dessine un rectangle plein
+//Draw
 void FullRectangle (int x,int y,int w,int h)
 {
 	glBegin (GL_QUADS);
@@ -360,6 +366,7 @@ void FullRectangle (int x,int y,int w,int h)
 	glEnd();
 }
 //dessine un rectangle vide (inutilisé)
+//Draw
 void ERectangle (int x,int y,int w,int h)
 {
 	glBegin (GL_LINE_LOOP);
@@ -371,6 +378,7 @@ void ERectangle (int x,int y,int w,int h)
 }	
 
 // procédure d'affichage
+//Affichage fenetre
 void display (void)
 {
 	glClear (GL_COLOR_BUFFER_BIT);
@@ -464,6 +472,7 @@ void display (void)
 	glFlush();
 }
 
+//Redimention Fenetre
 void reshape (int w,int h)
 {
 	glViewport (0,0,(GLsizei) w,(GLsizei) h);
@@ -476,6 +485,7 @@ void reshape (int w,int h)
 	height=h;
 }
 
+//Input - Keyboard
 void keyboard(unsigned char key, int x,int y)
 {
 	x=(int) ((float)x/(float)width*640.);
@@ -508,6 +518,7 @@ void keyboard(unsigned char key, int x,int y)
     }
 }
 
+//Cases
 void PopNF(int a)// on enleve le mur a
 {
 	for (int i=a+1;i<nbnonfranchissable;i++)
@@ -515,6 +526,7 @@ void PopNF(int a)// on enleve le mur a
 	nbnonfranchissable--;
 }
 
+//Input - Mouse
 void mouseClick(int x,int y)// en cas de click, on rajoute ou on enlève un mur
 {
 	int a;
@@ -549,6 +561,7 @@ void DisableOpenGL (HWND hWnd, HDC hDC, HGLRC hRC);
  *
  **************************/
 
+//Main Function
 int WINAPI 
 WinMain (HINSTANCE hInstance,
          HINSTANCE hPrevInstance,
@@ -686,6 +699,7 @@ WndProc (HWND hWnd, UINT message,
  *
  *******************/
 
+//OpenGL
 void EnableOpenGL (HWND hWnd, HDC *hDC, HGLRC *hRC)
 {
     PIXELFORMATDESCRIPTOR pfd;
@@ -717,6 +731,7 @@ void EnableOpenGL (HWND hWnd, HDC *hDC, HGLRC *hRC)
  *
  ******************/
 
+//OpenGL
 void DisableOpenGL (HWND hWnd, HDC hDC, HGLRC hRC)
 {
     wglMakeCurrent (NULL, NULL);
