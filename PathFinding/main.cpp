@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 /**************************
  * Includes
  *
@@ -13,6 +14,7 @@
  * Function Declarations
  *
  **************************/
+
 #ifndef CALLBACK
 #define CALLBACK
 #endif
@@ -41,6 +43,7 @@ int height;
 DWORD time;//temps de calcul
 
 // la structure pour une case
+//Sera sûrement utile pour caculer la distance heuristique
 struct cases
 {
 	int x;
@@ -222,7 +225,7 @@ void DrawDir(int x,int y,int direc)// on dessine les directions dans les cases (
 void astar (void)// L'algorithme A*...
 {
 	nochemin=false;
-	time=GetTickCount ();
+	time=GetTickCount();
 	vide();
 /*	char buffer[200];  
 	char buf[2000];*/
@@ -254,7 +257,7 @@ void init (void)
 				CLIP_DEFAULT_PRECIS,		// Clipping Precision
 				ANTIALIASED_QUALITY,		// Output Quality
 				FF_DONTCARE|DEFAULT_PITCH,	// Family And Pitch
-				"Tahoma");			// Font Name
+				L"Tahoma");			// Font Name
 
 	oldfont = (HFONT)SelectObject(hDC, font);		// Selects The Font We Want
 	wglUseFontBitmaps(hDC, 0, 256, base);			// Builds 96 Characters Starting At Character 32
@@ -264,8 +267,6 @@ void init (void)
 	astar();
 	glBlendFunc (GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	glEnable (GL_BLEND);
-
-
 }
 //Piqué chez Nehe *********************
 GLvoid glPrint(const char *fmt, ...)				// Custom GL "Print" Routine
@@ -320,7 +321,7 @@ void display (void)
 			ERectangle (a,b,16,16);*/
 			
 	// les murs en gris
-	glColor3f (.4,.4,.4); 
+	glColor3f (.4f,.4f,.4f); 
 	for (int a=0;a<nbnonfranchissable;a++)
 		FullRectangle(nonfranchissable[a].x*TX,nonfranchissable[a].y*TY,TX,TY);
 
@@ -375,7 +376,7 @@ void display (void)
 	p.x=(int) ((float)p.x/(float)width*640.);
 	p.y=(int) ((float)p.y/(float)height*480.);
 	
-	glColor4f (.5,1,.5,.4);	
+	glColor4f (.5f,1.0f,.5f,.4f);	
 	FullRectangle(p.x/TX*TX+2,p.y/TY*TY+2,TX-4,TY-4);
 
 //	ERectangle (p.x-TX/2,p.y-TY/2,TX,TY);
@@ -388,13 +389,13 @@ void display (void)
     	
 	glEnd();
 	glBegin (GL_TRIANGLE_FAN);
-		glColor4f(1,.5,1,.8);
+		glColor4f(1.0f,.5f,1.0f,.8f);
 		glVertex2i (p.x,p.y);
-		glColor4f(1,1,.5,.8);
+		glColor4f(1.0f,1.0f,.5f,.8f);
 		glVertex2i (p.x,p.y+13);
-		glColor4f(1,.5,.5,.8);
+		glColor4f(1.0f,.5f,.5f,.8f);
 		glVertex2i (p.x+4,p.y+10);
-  		glColor4f(1,0,0,.8);
+  		glColor4f(1.0f,0.0f,0.0f,.8f);
 		glVertex2i (p.x+10,p.y+13);
     	
 	glEnd();
@@ -513,12 +514,12 @@ WinMain (HINSTANCE hInstance,
     wc.hCursor = LoadCursor (NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH) GetStockObject (BLACK_BRUSH);
     wc.lpszMenuName = NULL;
-    wc.lpszClassName = "GLSample";
+    wc.lpszClassName = L"GLSample";
     RegisterClass (&wc);
 
     /* create main window */
     hWnd = CreateWindow (
-      "GLSample", "A* Test", 
+      L"GLSample", L"A* Test", 
       WS_OVERLAPPEDWINDOW,
       0, 0, 640, 480,
       NULL, NULL, hInstance, NULL);
@@ -656,7 +657,6 @@ EnableOpenGL (HWND hWnd, HDC *hDC, HGLRC *hRC)
     /* create and enable the render context (RC) */
     *hRC = wglCreateContext( *hDC );
     wglMakeCurrent( *hDC, *hRC );
-
 }
 
 
