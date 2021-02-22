@@ -1,8 +1,8 @@
 #include "WinManager.h"
 #include <memory>
 
-int width;
-int height;
+int width = 640;
+int height = 480;
 HWND hWnd;
 GridManager grid(hWnd, width, height);
 
@@ -33,7 +33,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CHAR:
         GetCursorPos(&p);
         ScreenToClient(hWnd, &p);
-        //grid.Keyboard(wParam, p.x, p.y);
+        grid.Keyboard(wParam, p.x, p.y);
         break;
     case WM_LBUTTONDOWN:
         cl = true;
@@ -43,13 +43,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             GetCursorPos(&p);
             ScreenToClient(hWnd, &p);
-            //grid.MouseClick(p.x, p.y);
+            grid.MouseClick(p.x, p.y);
         }
         cl = false;
         break;
 
     case WM_SIZE:
-        WinManager::Resize(LOWORD(lParam), HIWORD(lParam));
+        glViewport(0, 0, (GLsizei)LOWORD(lParam), (GLsizei)HIWORD(lParam));
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, 640, 480, 0, -1, 1);  //projection 640*480 (comme d'hab'...)
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }

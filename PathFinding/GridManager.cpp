@@ -1,11 +1,11 @@
 #include "GridManager.h"
 
-GridManager::GridManager(HWND& hWnd, int width_in, int height_in)
+GridManager::GridManager(HWND& hWnd, int& width_in, int& height_in)
 	:
-	hWnd(hWnd)
+	hWnd(hWnd),
+	width(width_in),
+	height(height_in)
 {
-	width = width_in;
-	height = height_in;
 }
 
 GridManager::~GridManager()

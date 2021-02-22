@@ -18,7 +18,7 @@ class GraphicsManager
 {
 public:
 	GraphicsManager() = default;
-	~GraphicsManager();
+	~GraphicsManager() = default;
 
 	void DrawRect(int x, int y, int w, int h);
 	void DrawRectBorder(int x, int y, int w, int h);

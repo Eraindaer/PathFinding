@@ -1,16 +1,13 @@
 #include "WinManager.h"
 
-int WinManager::width;
-int WinManager::height;
-
-WinManager::WinManager(HWND& hWnd_in, HINSTANCE hInstance, WNDCLASS& wc_in, GridManager& grid_in, int width_in, int height_in)
+WinManager::WinManager(HWND& hWnd_in, HINSTANCE hInstance, WNDCLASS& wc_in, GridManager& grid_in, int& width_in, int& height_in)
     :
+    width(width_in),
+    height(height_in),
     grid(grid_in),
     hWnd(hWnd_in)
 {
     wc = wc_in;
-    width = width_in;
-    height = height_in;
     /* create main window */
     hWnd = CreateWindow(
         L"GLSample", L"A* Test",
@@ -70,18 +67,6 @@ void WinManager::DisableOpenGL()
     wglMakeCurrent(NULL, NULL);
     wglDeleteContext(hRC);
     ReleaseDC(hWnd, hDC);
-}
-
-void WinManager::Resize(int w, int h)
-{
-    glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, 640, 480, 0, -1, 1);  //projection 640*480 (comme d'hab'...)
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    width = w;
-    height = h;
 }
 
 void WinManager::Init()

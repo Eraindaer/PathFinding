@@ -1,9 +1,5 @@
 #include "GraphicsManager.h"
 
-GraphicsManager::~GraphicsManager()
-{
-}
-
 void GraphicsManager::DrawRect(int x, int y, int w, int h)
 {
 	glBegin(GL_QUADS);
@@ -69,8 +65,8 @@ void GraphicsManager::DrawDir(int x, int y, int direc)
 		glVertex2i(x * TX + TX / 4 + 3, y * TY + TY / 4);
 		break;
 	case 6:
-		glVertex2i(x * TX + (TX * 3) / 4, y * TY + (TY * 3) / 4);
-		glVertex2i(x * TX + TX / 4, y * TY + TY / 4);
+		glVertex2i(x * TX + TX / 4, y * TY + (TY * 3) / 4);
+		glVertex2i(x * TX + (TX * 3) / 4, y * TY + TY / 4);
 		glVertex2i(x * TX + (TX * 3) / 4, y * TY + TY / 4);
 		glVertex2i(x * TX + (TX * 3) / 4, y * TY + TY / 4 + 3);
 		glVertex2i(x * TX + (TX * 3) / 4, y * TY + TY / 4);
@@ -85,8 +81,8 @@ void GraphicsManager::DrawDir(int x, int y, int direc)
 		glVertex2i(x * TX + TX / 4 + 3, y * TY + (TY * 3) / 4);
 		break;
 	case 8:
-		glVertex2i(x * TX + TX / 4, y * TY + (TY * 3) / 4);
-		glVertex2i(x * TX + (TX * 3) / 4, y * TY + TY / 4);
+		glVertex2i(x * TX + (TX * 3) / 4, y * TY + (TY * 3) / 4);
+		glVertex2i(x * TX + TX / 4, y * TY + TY / 4);
 		glVertex2i(x * TX + (TX * 3) / 4, y * TY + (TY * 3) / 4);
 		glVertex2i(x * TX + (TX * 3) / 4, y * TY + (TY * 3) / 4 - 3);
 		glVertex2i(x * TX + (TX * 3) / 4, y * TY + (TY * 3) / 4);

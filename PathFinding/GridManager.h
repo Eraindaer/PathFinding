@@ -24,7 +24,7 @@ private:
 
 public:
 	GridManager() = default;
-	GridManager(HWND& hWnd, int width_in, int height_in);
+	GridManager(HWND& hWnd, int& width_in, int& height_in);
 	~GridManager();
 	GridManager(GridManager&);
 	GridManager& operator= (const GridManager&);
@@ -44,8 +44,8 @@ private:
 private:
 	HWND&  hWnd;
 	DWORD  time;
-	int    width;
-	int    height;
+	int&    width;
+	int&    height;
 	Cases  nonfranchissable[BX * BY] = {};
 	int	   nbnonfranchissable = 0;
 	Cases  ouvert[BX * BY] = {};
