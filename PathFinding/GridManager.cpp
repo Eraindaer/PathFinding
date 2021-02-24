@@ -6,13 +6,12 @@ GridManager::GridManager(HWND& hWnd, int& width_in, int& height_in)
 	width(width_in),
 	height(height_in)
 {
-	for (int j = 0; j < BY; j++) {
+	for (int j = 0; j < BY; j++)
 		for (int i = 0; i < BX; i++) {
 			if (i == 31)
 				int test;
 			grid[j * BX + i] = { i , j };
 		}
-	}
 }
 
 GridManager::~GridManager()
@@ -65,14 +64,8 @@ void GridManager::AStar()
 			}
 		}
 		for (auto& tile : grid) {
-			switch (tile.state) {
-			case Tiles::State::Opened:
-				if (tile.F <= current.F)
-					current = tile;
-				break;
-			default:
-				break;
-			}
+			if (tile.state == Tiles::State::Opened && tile.F <= current.F)
+				current = tile;
 		}
 
 		AddF(grid[current.y * BX + current.x]);
@@ -131,12 +124,14 @@ void GridManager::Draw(const GraphicsManager& gfx, GLuint base) const
 	{
 		switch (tile.state) {
 #if _DEBUG
+		//Cases ouvertes en vert foncé
 		case Tiles::State::Opened:
-			glColor3f(0.0f, 1.0f, 0.0f);
+			glColor3f(0.0f, 0.5f, 0.0f);
 			gfx.DrawRect(tile.x * TX, tile.y * TY, TX, TY);
 			break;
+		//Cases fermées en rouge foncé
 		case Tiles::State::Closed:
-			glColor3f(1.0f, 0.0f, 0.0f);
+			glColor3f(0.5f, 0.0f, 0.0f);
 			gfx.DrawRect(tile.x * TX, tile.y * TY, TX, TY);
 			break;
 #endif
@@ -283,7 +278,7 @@ void GridManager::Clear()
 	}
 }
 
-void GridManager::AddF(Tiles& c)
+void GridManager::AddF(Tiles& c) const
 {
 	c.state = Tiles::State::Closed;
 }
@@ -300,7 +295,6 @@ void GridManager::AddO(int x, int y, char direc, int g)
 				tile.G = g;
 				tile.F = g + tile.H;
 				tile.dir = direc;
-				dir[x][y] = direc;
 			}
 			break;
 		case Tiles::State::None:
@@ -309,7 +303,6 @@ void GridManager::AddO(int x, int y, char direc, int g)
 			tile.H = 10 * (ABS(end.x - x) + ABS(end.y - y));
 			tile.F = g + tile.H;
 			tile.dir = direc;
-			dir[x][y] = direc;
 		default:
 			break;
 		}

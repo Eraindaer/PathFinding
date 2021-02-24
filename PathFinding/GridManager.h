@@ -47,7 +47,7 @@ public:
 
 private:
 	void Clear();
-	void AddF(Tiles& c);
+	void AddF(Tiles& c) const;
 	void AddO(int x, int y, char direc, int g);
 
 private:
