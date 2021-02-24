@@ -6,6 +6,13 @@ GridManager::GridManager(HWND& hWnd, int& width_in, int& height_in)
 	width(width_in),
 	height(height_in)
 {
+	for (int j = 0; j < BY; j++) {
+		for (int i = 0; i < BX; i++) {
+			if (i == 31)
+				int test;
+			grid[j * BX + i] = { i , j };
+		}
+	}
 }
 
 GridManager::~GridManager()
@@ -27,40 +34,59 @@ GridManager& GridManager::operator=(const GridManager& gridMan)
 	return *this;
 }
 
-void GridManager::AStar()
+void GridManager::AStar() 
 {
 	nopath = false;
 	time = GetTickCount();
 	Clear();
 	Tiles current = start;
+	current.G = 0;
 	bool finished = false;
 
 	//Etablissement des chemins possibles
-	while (!finished && !nopath) {
+	while(!finished && !nopath){
 		int g = current.G;
-		AddO(current.x - 1, current.y, LEFT, g + 11);
-		AddO(current.x, current.y - 1, UP, g + 11);
-		AddO(current.x + 1, current.y, RIGHT, g + 11);
-		AddO(current.x, current.y + 1, DOWN, g + 11);
-		AddO(current.x - 1, current.y - 1, UPLEFT, g + 20);
-		AddO(current.x + 1, current.y - 1, UPRIGHT, g + 20);
-		AddO(current.x - 1, current.y + 1, DOWNLEFT, g + 20);
-		AddO(current.x + 1, current.y + 1, DOWNRIGHT, g + 20);
+		AddO(current.x - 1, current.y, LEFT, g + 10);
+		AddO(current.x, current.y - 1, UP, g + 10);
+		AddO(current.x + 1, current.y, RIGHT, g + 10);
+		AddO(current.x, current.y + 1, DOWN, g + 10);
+		AddO(current.x - 1, current.y - 1, UPLEFT, g + 19);
+		AddO(current.x + 1, current.y - 1, UPRIGHT, g + 19);
+		AddO(current.x - 1, current.y + 1, DOWNLEFT, g + 19);
+		AddO(current.x + 1, current.y + 1, DOWNRIGHT, g + 19);
 
-		current = opened[0];
-
-		for (int i = 1; i < nOpened; i++) {
-			if (opened[i].F <= current.F)
-				current = opened[i];
+		Tiles temp = current;
+		temp.state = Tiles::State::Opened;
+		for (auto& tile : grid) {
+			switch (tile.state) {
+			case Tiles::State::Opened:
+				if (tile.F <= temp.F)
+					temp = tile;
+				break;
+			case Tiles::State::None:
+				break;
+			case Tiles::State::Closed:
+				break;
+			default:
+				break;
+			}
+			
+			if (tile.state == Tiles::State::Opened)
+			{
+				if (tile.F <= temp.F)
+					temp = tile;
+			}
 		}
-		AddF(current);
-		DelO(current);
+
+		AddF(grid[temp.y * BX + temp.x]);
+
+		current = temp;
+
 		if (current.x == end.x && current.y == end.y) {
 			finished = true;
 		}
-		if (nOpened == 0) {
+		if (nOpened == 0)
 			nopath = true;
-		}
 	}
 	//Tracer du chemin en partant de l'arrivée
 	if (finished) {
@@ -98,13 +124,9 @@ void GridManager::AStar()
 			default:
 				break;
 			}
-			for (int i = 0; i < nClosed; i++) {
-				if (temp.x == closed[i].x && temp.y == closed[i].y) {
-					path[nPath] = closed[i];
-					nPath++;
-					break;
-				}
-			}
+			for (auto& tile : grid)
+				if (tile.state ==Tiles::State::Closed && temp.x == tile.x && temp.y == tile.y)
+					tile.state = Tiles::State::Path;
 		}
 	}
 }
@@ -113,24 +135,32 @@ void GridManager::Draw(const GraphicsManager& gfx, GLuint base) const
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// grille
-	/*	glColor3f (.5,.5,.5);
-		for (int a=0;a<640;a+=16)
-			for (int b=0;b<480;b+=16)
-				ERectangle (a,b,16,16);*/
-
-				// les murs en gris
-	glColor3f(.4f, .4f, .4f);
-	for (int a = 0; a < nObstacle; a++)
-		gfx.DrawRect(obstacle[a].x * TX, obstacle[a].y * TY, TX, TY);
-
-	// le chemin en bleu avec les directions en cyan
-	for (int a = 0; a < nPath; a++)
+	for (auto& tile : grid)
 	{
-		glColor3f(0, 0, 1);
-		gfx.DrawRect(path[a].x * TX, path[a].y * TY, TX, TY);
-		glColor3f(0, 1, 1);
-		gfx.DrawDir(path[a].x, path[a].y, dir[path[a].x][path[a].y]);
+		switch (tile.state) {
+		case Tiles::State::Opened:
+			glColor3f(0.0f, 1.0f, 0.0f);
+			gfx.DrawRect(tile.x * TX, tile.y * TY, TX, TY);
+			break;
+		case Tiles::State::Closed:
+			glColor3f(1.0f, 0.0f, 0.0f);
+			gfx.DrawRect(tile.x * TX, tile.y * TY, TX, TY);
+			break;
+		//Obstacles en gris
+		case Tiles::State::Obstacle:
+			glColor3f(.4f, .4f, .4f);
+			gfx.DrawRect(tile.x * TX, tile.y * TY, TX, TY);
+			break;
+		//Chemin en cyan
+		case Tiles::State::Path:
+			glColor3f(0, 0, 1);
+			gfx.DrawRect(tile.x * TX, tile.y * TY, TX, TY);
+			glColor3f(0, 1, 1);
+			gfx.DrawDir(tile.x, tile.y, dir[tile.x][tile.y]);
+			break;
+		default:
+			break;
+		}
 	}
 
 	// le départ en vert
@@ -203,23 +233,14 @@ void GridManager::Draw(const GraphicsManager& gfx, GLuint base) const
 
 void GridManager::MouseClick(int x, int y)
 {
-	int a;
-	x = (int)((float)x / (float)width * 640.0f);
-	y = (int)((float)y / (float)height * 480.0f);
+	x = (int)((float)x / (float)width * 640.0f) / TX;
+	y = (int)((float)y / (float)height * 480.0f) / TY;
 
-	x /= TX; y /= TY;
-	if (nPath > 0) Clear();
+	Clear();
 
-	for (a = 0; a < nObstacle; a++)
-		if (obstacle[a].x == x && obstacle[a].y == y)
-		{
-			PopNF(a);
-			AStar();
-			return;
-		}
-	obstacle[nObstacle].x = x;
-	obstacle[nObstacle].y = y;
-	nObstacle++;
+	auto& tile = grid[y * BX + x];
+	tile.state = tile.state == Tiles::State::Obstacle ? Tiles::State::None : Tiles::State::Obstacle;
+
 	AStar();
 }
 
@@ -258,67 +279,54 @@ void GridManager::Keyboard(unsigned char key, int x, int y)
 void GridManager::Clear()
 {
 	nOpened = 0;
-	nClosed = 0;
-	nPath = 0;
+	for (auto& tile : grid) {
+		switch (tile.state) {
+		case Tiles::State::Closed:
+		case Tiles::State::Opened:
+		case Tiles::State::Path:
+			tile.state = Tiles::State::None;
+			break;
+		default:
+			break;
+		}
+	}
 }
 
-void GridManager::AddF(Tiles c)
+void GridManager::AddF(Tiles& c)
 {
-	closed[nClosed] = c;
-	nClosed++;
+	DelO(c);
+	c.state = Tiles::State::Closed;
 }
 
 void GridManager::AddO(int x, int y, char direc, int g)
 {
-	int a;
 	if (!(x < 0 || x >= BX || y < 0 || y >= BY))//bornes
 	{
-		for (a = 0; a < nClosed; a++)//case fermée?
-			if (closed[a].x == x && closed[a].y == y)
-				return;
-
-		for (a = 0; a < nObstacle; a++)//case franchissable?
-			if (obstacle[a].x == x && obstacle[a].y == y)
-				return;
-
-		for (a = 0; a < nOpened; a++)//case ouverte?
-			if (opened[a].x == x && opened[a].y == y)
-			{
-				if (opened[a].G > g)// on change la direction dans la case
-				{
-					opened[a].G = g;
-					opened[a].F = g + opened[a].H;
-					dir[x][y] = direc;
-				}
-				return;
+		auto& tile = grid[y * BX + x];
+		switch (tile.state)
+		{
+		case Tiles::State::Opened:
+			if (tile.G >= g) {
+				tile.G = g;
+				tile.F = g + tile.H;
+				dir[x][y] = direc;
 			}
-		// on rajoute la case
-		opened[nOpened].x = x;
-		opened[nOpened].y = y;
-		opened[nOpened].G = g;
-		opened[nOpened].H = 10 * (ABS(end.x - x) + ABS(end.y - y));
-		opened[nOpened].F = g + opened[nOpened].H;
-		dir[x][y] = direc;
-
-		nOpened++;
+			break;
+		case Tiles::State::None:
+			tile.state = Tiles::State::Opened;
+			tile.G = g;
+			tile.H = 10 * (ABS(end.x - x) + ABS(end.y - y));
+			tile.F = g + tile.H;
+			dir[x][y] = direc;
+			nOpened++;
+		default:
+			break;
+		}
 	}
 }
 
-void GridManager::DelO(Tiles c)
+void GridManager::DelO(Tiles& c)
 {
-	for (int a = 0; a < nOpened; a++)
-
-		if (c.x == opened[a].x && c.y == opened[a].y)
-		{
-			for (int i = a + 1; i < nOpened; i++)
-				opened[i - 1] = opened[i];
-			nOpened--;
-		}
-}
-
-void GridManager::PopNF(int a)
-{
-	for (int i = a + 1; i < nObstacle; i++)
-		obstacle[i - 1] = obstacle[i];
-	nObstacle--;
+	c.state = Tiles::State::None;
+	nOpened--;
 }
