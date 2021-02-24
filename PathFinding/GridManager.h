@@ -2,6 +2,7 @@
 #include "GraphicsManager.h"
 #include <memory>
 
+#define NONE        0
 #define LEFT		1
 #define UP  		2
 #define RIGHT		3
@@ -29,6 +30,7 @@ private:
 		int y = 0;
 		int F = 0, G = 0, H = 0;
 		State state = State::None;
+		char dir = NONE;
 	};
 
 public:
@@ -57,7 +59,6 @@ private:
 	Tiles  grid[BX * BY] = {};
 	Tiles  start = { 0,0 };
 	Tiles  end = { BX - 1,BY - 1 };
-	char   dir[BX][BY];
 	bool   nopath = false;// pour savoir si il y a un chemin
 	bool   viewhelp = false;// pour afficher l'aide (H)
 };

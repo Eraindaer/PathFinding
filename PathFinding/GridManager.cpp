@@ -81,40 +81,42 @@ void GridManager::AStar()
 	}
 	//Tracer du chemin en partant de l'arrivée
 	if (finished) {
-		Tiles temp = end;
+		Tiles temp = grid[end.y * BX + end.x];
 		while (temp.x != start.x || temp.y != start.y) {
-			switch (dir[temp.x][temp.y]) {
+			Tiles next = temp;
+			switch (temp.dir) {
 			case 1:
-				temp.x++;
+				next.x++;
 				break;
 			case 2:
-				temp.y++;
+				next.y++;
 				break;
 			case 3:
-				temp.x--;
+				next.x--;
 				break;
 			case 4:
-				temp.y--;
+				next.y--;
 				break;
 			case 5:
-				temp.x++;
-				temp.y++;
+				next.x++;
+				next.y++;
 				break;
 			case 6:
-				temp.x--;
-				temp.y++;
+				next.x--;
+				next.y++;
 				break;
 			case 7:
-				temp.x++;
-				temp.y--;
+				next.x++;
+				next.y--;
 				break;
 			case 8:
-				temp.x--;
-				temp.y--;
+				next.x--;
+				next.y--;
 				break;
 			default:
 				break;
 			}
+			temp = grid[next.y * BX + next.x];
 			auto& tile = grid[temp.y * BX + temp.x];
 			tile.state = Tiles::State::Path;
 		}
@@ -148,7 +150,7 @@ void GridManager::Draw(const GraphicsManager& gfx, GLuint base) const
 			glColor3f(0, 0, 1);
 			gfx.DrawRect(tile.x * TX, tile.y * TY, TX, TY);
 			glColor3f(0, 1, 1);
-			gfx.DrawDir(tile.x, tile.y, dir[tile.x][tile.y]);
+			gfx.DrawDir(tile.x, tile.y, tile.dir);
 			break;
 		default:
 			break;
@@ -297,6 +299,7 @@ void GridManager::AddO(int x, int y, char direc, int g)
 			if (tile.G >= g) {
 				tile.G = g;
 				tile.F = g + tile.H;
+				tile.dir = direc;
 				dir[x][y] = direc;
 			}
 			break;
@@ -305,6 +308,7 @@ void GridManager::AddO(int x, int y, char direc, int g)
 			tile.G = g;
 			tile.H = 10 * (ABS(end.x - x) + ABS(end.y - y));
 			tile.F = g + tile.H;
+			tile.dir = direc;
 			dir[x][y] = direc;
 		default:
 			break;
