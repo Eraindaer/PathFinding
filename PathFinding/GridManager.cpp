@@ -40,7 +40,6 @@ void GridManager::AStar()
 	time = GetTickCount();
 	Clear();
 	Tiles current = start;
-	current.G = 0;
 	bool finished = false;
 
 	//Etablissement des chemins possibles
@@ -55,38 +54,30 @@ void GridManager::AStar()
 		AddO(current.x - 1, current.y + 1, DOWNLEFT, g + 19);
 		AddO(current.x + 1, current.y + 1, DOWNRIGHT, g + 19);
 
-		Tiles temp = current;
-		temp.state = Tiles::State::Opened;
+		for (auto& tile : grid) {
+			if (tile.state == Tiles::State::Opened) {
+				nopath = false;
+				current = tile;
+				break;
+			}
+			else {
+				nopath = true;
+			}
+		}
 		for (auto& tile : grid) {
 			switch (tile.state) {
 			case Tiles::State::Opened:
-				if (tile.F <= temp.F)
-					temp = tile;
-				break;
-			case Tiles::State::None:
-				break;
-			case Tiles::State::Closed:
+				if (tile.F <= current.F)
+					current = tile;
 				break;
 			default:
 				break;
 			}
-			
-			if (tile.state == Tiles::State::Opened)
-			{
-				if (tile.F <= temp.F)
-					temp = tile;
-			}
 		}
 
-		AddF(grid[temp.y * BX + temp.x]);
+		AddF(grid[current.y * BX + current.x]);
 
-		current = temp;
-
-		if (current.x == end.x && current.y == end.y) {
-			finished = true;
-		}
-		if (nOpened == 0)
-			nopath = true;
+		finished = current.x == end.x && current.y == end.y;
 	}
 	//Tracer du chemin en partant de l'arrivée
 	if (finished) {
@@ -124,9 +115,8 @@ void GridManager::AStar()
 			default:
 				break;
 			}
-			for (auto& tile : grid)
-				if (tile.state ==Tiles::State::Closed && temp.x == tile.x && temp.y == tile.y)
-					tile.state = Tiles::State::Path;
+			auto& tile = grid[temp.y * BX + temp.x];
+			tile.state = Tiles::State::Path;
 		}
 	}
 }
@@ -138,6 +128,7 @@ void GridManager::Draw(const GraphicsManager& gfx, GLuint base) const
 	for (auto& tile : grid)
 	{
 		switch (tile.state) {
+#if _DEBUG
 		case Tiles::State::Opened:
 			glColor3f(0.0f, 1.0f, 0.0f);
 			gfx.DrawRect(tile.x * TX, tile.y * TY, TX, TY);
@@ -146,6 +137,7 @@ void GridManager::Draw(const GraphicsManager& gfx, GLuint base) const
 			glColor3f(1.0f, 0.0f, 0.0f);
 			gfx.DrawRect(tile.x * TX, tile.y * TY, TX, TY);
 			break;
+#endif
 		//Obstacles en gris
 		case Tiles::State::Obstacle:
 			glColor3f(.4f, .4f, .4f);
@@ -236,8 +228,6 @@ void GridManager::MouseClick(int x, int y)
 	x = (int)((float)x / (float)width * 640.0f) / TX;
 	y = (int)((float)y / (float)height * 480.0f) / TY;
 
-	Clear();
-
 	auto& tile = grid[y * BX + x];
 	tile.state = tile.state == Tiles::State::Obstacle ? Tiles::State::None : Tiles::State::Obstacle;
 
@@ -278,7 +268,6 @@ void GridManager::Keyboard(unsigned char key, int x, int y)
 
 void GridManager::Clear()
 {
-	nOpened = 0;
 	for (auto& tile : grid) {
 		switch (tile.state) {
 		case Tiles::State::Closed:
@@ -294,7 +283,6 @@ void GridManager::Clear()
 
 void GridManager::AddF(Tiles& c)
 {
-	DelO(c);
 	c.state = Tiles::State::Closed;
 }
 
@@ -318,15 +306,8 @@ void GridManager::AddO(int x, int y, char direc, int g)
 			tile.H = 10 * (ABS(end.x - x) + ABS(end.y - y));
 			tile.F = g + tile.H;
 			dir[x][y] = direc;
-			nOpened++;
 		default:
 			break;
 		}
 	}
-}
-
-void GridManager::DelO(Tiles& c)
-{
-	c.state = Tiles::State::None;
-	nOpened--;
 }

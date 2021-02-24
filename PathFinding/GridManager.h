@@ -25,9 +25,9 @@ private:
 			Path
 		};
 
-		int x;
-		int y;
-		int F, G, H;
+		int x = 0;
+		int y = 0;
+		int F = 0, G = 0, H = 0;
 		State state = State::None;
 	};
 
@@ -47,7 +47,6 @@ private:
 	void Clear();
 	void AddF(Tiles& c);
 	void AddO(int x, int y, char direc, int g);
-	void DelO(Tiles& c);
 
 private:
 	DWORD  time;
@@ -55,18 +54,6 @@ private:
 	int&   width;
 	int&   height;
 
-
-	/*Tiles  obstacle[BX * BY] = {};
-	int	   nObstacle = 0;
-	Tiles  opened[BX * BY] = {};
-	Tiles  closed[BX * BY] = {};
-	int    nClosed = 0;
-	Tiles  path[BX * BY] = {};
-	int    nPath;*/
-
-	int	   nOpened = 0;
-	char   openCoordX[BX * BY] = {};
-	char   openCoordY[BX * BY] = {};
 	Tiles  grid[BX * BY] = {};
 	Tiles  start = { 0,0 };
 	Tiles  end = { BX - 1,BY - 1 };
