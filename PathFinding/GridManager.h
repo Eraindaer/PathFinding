@@ -42,10 +42,13 @@ private:
 	void PopNF(int a);
 
 private:
-	HWND&  hWnd;
 	DWORD  time;
+	HWND&  hWnd;
 	int&   width;
 	int&   height;
+
+
+
 	Tiles  obstacle[BX * BY] = {};
 	int	   nObstacle = 0;
 	Tiles  opened[BX * BY] = {};
